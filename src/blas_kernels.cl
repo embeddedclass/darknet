@@ -189,10 +189,11 @@ __kernel void fast_mean_kernel(int tuning, __local float *sums, int filters, int
         }
     }
 
+    mean[i] = 0;
+
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
     int s;
-    mean[i] = 0;
     for(s = 0; s < tuning; ++s) {
         mean[i] += sums[s];
     }
@@ -217,11 +218,12 @@ __kernel void fast_variance_kernel(int tuning, __local float *sums, int filters,
         }
     }
 
+    variance[i] = 0;
+
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
     int s;
-    variance[i] = 0;
-    for(s = 0; s < tuning; ++s) {
+    for (s = 0; s < tuning; ++s) {
         variance[i] += sums[s];
     }
     variance[i] /= (spatial * batch - 1);
@@ -245,10 +247,11 @@ __kernel void fast_variance_kernel(int tuning, __local float *sums, int filters,
         }
     }
 
+    mean_delta[i] = 0;
+
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
     int s;
-    mean_delta[i] = 0;
     for(s = 0; s < tuning; ++s) {
         mean_delta[i] += sums[s];
     }
@@ -272,10 +275,11 @@ __kernel void fast_variance_delta_kernel(int tuning, __local float *sums, int fi
         }
     }
 
+    variance_delta[i] = 0;
+
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
     int s;
-    variance_delta[i] = 0;
     for(s = 0; s < tuning; ++s) {
         variance_delta[i] += sums[s];
     }

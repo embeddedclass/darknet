@@ -418,7 +418,7 @@ void l2normalize_gpu(cl_mem_ext x, cl_mem_ext dx, int batch, int filters, int sp
 
 void fast_mean_gpu(cl_mem_ext x, int batch, int filters, int spatial, cl_mem_ext mean)
 {
-    int tuning = 16;
+    int tuning = filters / 4;
     dim2 dimGridG1;
     dimGridG1 = dim2_create(filters, 1);
     dim2 dimGridL1;
@@ -429,7 +429,7 @@ void fast_mean_gpu(cl_mem_ext x, int batch, int filters, int spatial, cl_mem_ext
 
 void fast_variance_gpu(cl_mem_ext x, cl_mem_ext mean, int batch, int filters, int spatial, cl_mem_ext variance)
 {
-    int tuning = 16;
+    int tuning = filters / 4;
     dim2 dimGridG1;
     dimGridG1 = dim2_create(filters, 1);
     dim2 dimGridL1;
@@ -440,7 +440,7 @@ void fast_variance_gpu(cl_mem_ext x, cl_mem_ext mean, int batch, int filters, in
 
 void fast_mean_delta_gpu(cl_mem_ext delta, cl_mem_ext variance, int batch, int filters, int spatial, cl_mem_ext mean_delta)
 {
-    int tuning = 16;
+    int tuning = filters / 4;
     dim2 dimGridG1;
     dimGridG1 = dim2_create(filters, 1);
     dim2 dimGridL1;
@@ -451,7 +451,7 @@ void fast_mean_delta_gpu(cl_mem_ext delta, cl_mem_ext variance, int batch, int f
 
 void fast_variance_delta_gpu(cl_mem_ext x, cl_mem_ext delta, cl_mem_ext mean, cl_mem_ext variance, int batch, int filters, int spatial, cl_mem_ext variance_delta)
 {
-    int tuning = 16;
+    int tuning = filters / 4;
     dim2 dimGridG1;
     dimGridG1 = dim2_create(filters, 1);
     dim2 dimGridL1;
