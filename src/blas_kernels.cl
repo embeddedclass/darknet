@@ -139,7 +139,7 @@ __kernel void mean_delta_kernel(int N, __global float *delta, __global float *va
         }
     }
 
-    mean_delta[i] *= (-1.f/sqrt(variance[i] + .0001f));
+    mean_delta[i] *= (-1.f/sqrt(variance[i] + .00001f));
 }
 
 
@@ -156,7 +156,7 @@ __kernel void variance_delta_kernel(int N, __global float *x, __global float *de
             variance_delta[i] += delta[index] * (x[index] - mean[i]);
         }
     }
-    variance_delta[i] *= -.5f * pow(variance[i] + .0001f, (float)(-3.f/2.f));
+    variance_delta[i] *= -.5f * pow(variance[i] + .00001f, (float)(-3.f/2.f));
 }
 
 
@@ -255,7 +255,7 @@ __kernel void fast_variance_kernel(int tuning, __local float *sums, int filters,
     for(s = 0; s < tuning; ++s) {
         mean_delta[i] += sums[s];
     }
-    mean_delta[i] *= (-1.f/sqrt(variance[i] + .0001f));
+    mean_delta[i] *= (-1.f/sqrt(variance[i] + .00001f));
 }
 
 __kernel void fast_variance_delta_kernel(int tuning, __local float *sums, int filters, int batch, int spatial, __global float *x, __global float *variance, __global float *delta, __global float *mean, __global float *variance_delta)
@@ -283,7 +283,7 @@ __kernel void fast_variance_delta_kernel(int tuning, __local float *sums, int fi
     for(s = 0; s < tuning; ++s) {
         variance_delta[i] += sums[s];
     }
-    variance_delta[i] *= -.5f * pow(variance[i] + .0001f, (float)(-3.f/2.f));
+    variance_delta[i] *= -.5f * pow(variance[i] + .00001f, (float)(-3.f/2.f));
 }
 
 
