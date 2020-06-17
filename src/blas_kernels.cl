@@ -346,7 +346,6 @@ __kernel void l2norm_kernel(int N, __global float *x, __global float *dx, int ba
     }
 }
 
-
 __kernel void reorg_kernel(int N, __global float *x, int w, int h, int c, int batch, int stride, int forward, __global float *out)
 {
     int i = (get_group_id(0) + get_group_id(1)*get_num_groups(0)) * get_local_size(0) + get_local_id(0);
@@ -716,6 +715,21 @@ __kernel void dot_kernel(__global float *output, float scale, int batch, int n, 
 }
 
 
+inline void atomicAdd(volatile __global float *source, const float operand) {
+    union {
+        unsigned int intVal;
+        float floatVal;
+    } newVal;
+    union {
+        unsigned int intVal;
+        float floatVal;
+    } prevVal;
+    do {
+        prevVal.floatVal = *source;
+        newVal.floatVal = prevVal.floatVal + operand;
+    } while (atomic_cmpxchg((volatile __global unsigned int *)source, prevVal.intVal, newVal.intVal) != prevVal.intVal);
+}
+
 __kernel void upsample_kernel(int N, __global float *x, int w, int h, int c, int batch, int stride, int forward, float scale, __global float *out)
 {
     int i = (get_group_id(0) + get_group_id(1)*get_num_groups(0)) * get_local_size(0) + get_local_id(0);
@@ -735,10 +749,8 @@ __kernel void upsample_kernel(int N, __global float *x, int w, int h, int c, int
 
     int in_index = b*w*h*c + in_c*w*h + in_h*w + in_w;
 
-    if(forward)
-        out[out_index] += scale * x[in_index];
-    else
-        x[in_index] += scale * out[out_index];
+    if(forward) out[out_index] += scale * x[in_index];
+    else atomicAdd(&x[in_index], scale * out[out_index]);
 }
 
 
